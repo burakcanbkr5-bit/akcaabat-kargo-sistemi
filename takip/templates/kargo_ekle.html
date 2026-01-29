@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8" data-aos="fade-up">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-primary text-white py-4 px-4 border-0">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-box-seam fs-1 me-3"></i>
+                        <div>
+                            <h3 class="fw-bold mb-0">
+                                {% if guncelle %}Kargo Güncelle{% else %}Yeni Kargo Kaydı{% endif %}
+                            </h3>
+                            <p class="small mb-0 opacity-75">Lütfen sevkiyat bilgilerini eksiksiz doldurun.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-4 p-md-5 bg-white">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row">
+                            {% for field in form %}
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label small fw-bold text-muted">
+                                    {{ field.label }}
+                                </label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <div class="form-text small">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% if field.errors %}
+                                    <div class="text-danger small mt-1">{{ field.errors }}</div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <hr class="my-4 opacity-25">
+
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a href="{% url 'ana_sayfa' %}" class="btn btn-light rounded-pill px-4 fw-bold">
+                                <i class="bi bi-x-lg me-1"></i> İptal
+                            </a>
+                            <button type="submit" class="btn btn-success rounded-pill px-5 fw-bold shadow-sm">
+                                <i class="bi bi-check-lg me-1"></i> 
+                                {% if guncelle %}Değişiklikleri Kaydet{% else %}Kaydı Tamamla{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Django Form Inputlarını Bootstrap ile uyumlu hale getirme */
+    input, select, textarea {
+        display: block;
+        width: 100%;
+        padding: 0.75rem 1.25rem;
+        font-size: 0.95rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        background-color: #f8f9fa;
+        background-clip: padding-box;
+        border: 1px solid #dee2e6;
+        appearance: none;
+        border-radius: 50px; /* Yuvarlak köşeler */
+        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    }
+    textarea { border-radius: 15px; } /* Textarea için daha az yuvarlaklık */
+    input:focus, select:focus, textarea:focus {
+        background-color: #fff;
+        border-color: #003d99;
+        outline: 0;
+        box-shadow: 0 0 0 0.25rem rgba(0, 61, 153, 0.1);
+    }
+</style>
+{% endblock %}

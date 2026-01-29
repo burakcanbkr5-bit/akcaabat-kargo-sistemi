@@ -1,0 +1,131 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akçaabat Kargo | Profesyonel Takip Sistemi</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    
+</head>
+<body>
+
+    <div class="content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-dark shadow-sm py-3">
+            <div class="container">
+                <a class="navbar-brand fw-bold fs-3" href="/">
+                    <span class="text-warning">AKÇAABAT</span>KARGO
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <div class="navbar-nav ms-auto align-items-center">
+                        <a class="nav-link px-3" href="/">Ana Sayfa</a>
+                        <a class="nav-link px-3" href="/hakkimizda">Hakkımızda</a>
+                        <a class="nav-link px-3" href="/iletisim">İletişim</a>
+                        
+                        {% if user.is_authenticated %}
+                            <a class="nav-link text-warning fw-bold" href="/yeni-kargo/">+ Yeni Kargo</a>
+                            <form action="{% url 'logout' %}" method="post" class="d-inline ms-2">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-danger px-3 border-0 rounded-pill shadow-sm">Çıkış Yap</button>
+                            </form>
+                        {% else %}
+                            <a class="nav-link px-3" href="{% url 'register' %}">Kayıt Ol</a>
+                            <a class="nav-link btn btn-outline-light btn-sm px-3 ms-lg-2 rounded-pill shadow-sm" href="{% url 'login' %}">Personel Girişi</a>
+                        {% endif %}
+
+                        <div class="ms-3">
+                            <button class="btn btn-sm btn-outline-light rounded-pill px-2" onclick="darkModeToggle()">
+                                <i id="darkIcon" class="bi bi-moon-stars-fill"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container mt-4">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <div class="container mb-4" data-aos="fade-up">
+        <div class="bg-white p-3 rounded-pill shadow-sm d-flex justify-content-between align-items-center px-4 border info-band">
+            <span class="small fw-bold text-primary"><i class="bi bi-geo-fill"></i> Akçaabat Lojistik Merkezi</span>
+            <span class="small text-muted d-none d-md-block"><i class="bi bi-cpu text-primary"></i> AI Tahmin Motoru Aktif</span>
+            <span class="small text-success fw-bold"><i class="bi bi-shield-check"></i> Güvenli Bağlantı</span>
+        </div>
+    </div>
+
+    <footer class="text-white pt-5 pb-3">
+        <div class="container text-center">
+            <h5 class="fw-bold text-warning mb-3">📦 AKÇAABAT KARGO</h5>
+            <div class="text-center small text-muted">© 2026 Akçaabat Kargo Lojistik A.Ş.</div>
+        </div>
+    </footer>
+
+    <div class="position-fixed bottom-0 end-0 p-4" style="z-index: 2000;">
+        <div class="dropdown">
+            <div class="bg-primary text-white p-3 rounded-circle shadow-lg d-flex align-items-center justify-content-center animate-pulse border border-white border-3" 
+                 style="width: 70px; height: 70px; cursor: pointer;" 
+                 data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-robot fs-1"></i>
+            </div>
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 p-4 mb-3" style="width: 300px;">
+                <li class="text-center">
+                    <div class="bg-primary-subtle p-2 rounded-pill mb-3 text-dark">
+                        <h6 class="fw-bold mb-0">Akçaabat AI Asistan</h6>
+                    </div>
+                    <p id="aiCevap" class="small text-muted italic">"Selam! Ben kargonun trafiğe göre ne zaman geleceğini tahmin edebilirim."</p>
+                    <hr>
+                    <input type="text" id="aiSorgu" class="form-control form-control-sm rounded-pill mb-2" placeholder="Takip no yazın...">
+                    <button onclick="aiAnalizEt()" class="btn btn-primary btn-sm w-100 rounded-pill fw-bold">AI ANALİZ ET</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        AOS.init({ duration: 1000, once: true, offset: 100 });
+
+        function darkModeToggle() {
+            const body = document.body;
+            const icon = document.getElementById('darkIcon');
+            const band = document.querySelector('.info-band');
+            body.classList.toggle('dark-mode');
+            
+            if(body.classList.contains('dark-mode')) {
+                icon.classList.replace('bi-moon-stars-fill', 'bi-sun-fill');
+                band.classList.replace('bg-white', 'bg-dark');
+            } else {
+                icon.classList.replace('bi-sun-fill', 'bi-moon-stars-fill');
+                band.classList.replace('bg-dark', 'bg-white');
+            }
+        }
+
+        function aiAnalizEt() {
+            const sorgu = document.getElementById('aiSorgu').value;
+            const cevapAlani = document.getElementById('aiCevap');
+            if (!sorgu) {
+                cevapAlani.innerHTML = "<span class='text-danger'>Takip no girin!</span>";
+                return;
+            }
+            cevapAlani.innerHTML = "<div class='spinner-border spinner-border-sm'></div> Analiz ediliyor...";
+            setTimeout(() => {
+                cevapAlani.innerHTML = "<span class='text-primary fw-bold small'>AI Analizi: Rota güncellendi, teslimat 2 saat içinde planlandı.</span>";
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

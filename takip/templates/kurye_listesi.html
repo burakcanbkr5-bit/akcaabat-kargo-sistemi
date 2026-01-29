@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+    <h2 class="mb-4 fw-bold">🛵 Sahadaki Personelimiz</h2>
+    {% for kurye in kuryeler %}
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm rounded-4 p-3 text-center">
+            <img src="{{ kurye.foto_url }}" class="rounded-circle mx-auto mb-2" width="100" height="100" style="object-fit:cover;">
+            <h5 class="fw-bold">{{ kurye.isim }}</h5>
+            <p class="text-muted small">{{ kurye.bolge }}</p>
+            <span class="badge {% if kurye.durum == 'Cevrimici' %}bg-success{% else %}bg-warning{% endif %}">
+                {{ kurye.durum }}
+            </span>
+            <p class="mt-2 text-warning">⭐ {{ kurye.puan }}</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

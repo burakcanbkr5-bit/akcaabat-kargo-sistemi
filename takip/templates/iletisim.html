@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row g-4" data-aos="fade-up">
+        <div class="col-md-5">
+            <div class="card shadow-lg border-0 rounded-4 p-4 h-100 bg-primary text-white">
+                <h3 class="fw-bold mb-4">İletişim Bilgilerimiz</h3>
+                <p class="mb-4">Size yardımcı olmak için buradayız. Akçaabat'taki merkezimize gelebilir veya bizi arayabilirsiniz.</p>
+                
+                <div class="d-flex align-items-start mb-3">
+                    <i class="bi bi-geo-alt-fill fs-4 me-3 text-warning"></i>
+                    <div>
+                        <h6 class="fw-bold mb-0">Adres</h6>
+                        <small>Akçaabat Lojistik Merkezi, Trabzon/Türkiye</small>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-start mb-3">
+                    <i class="bi bi-telephone-fill fs-4 me-3 text-warning"></i>
+                    <div>
+                        <h6 class="fw-bold mb-0">Telefon</h6>
+                        <small>+90 462 000 00 00</small>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-start mb-4">
+                    <i class="bi bi-envelope-at-fill fs-4 me-3 text-warning"></i>
+                    <div>
+                        <h6 class="fw-bold mb-0">E-posta</h6>
+                        <small>info@akcaabatkargo.com</small>
+                    </div>
+                </div>
+
+                <div class="mt-auto">
+                    <h6 class="fw-bold mb-2">Sosyal Medyada Biz</h6>
+                    <div class="d-flex gap-2">
+                        <a href="#" class="btn btn-sm btn-light rounded-circle"><i class="bi bi-facebook text-primary"></i></a>
+                        <a href="#" class="btn btn-sm btn-light rounded-circle"><i class="bi bi-instagram text-primary"></i></a>
+                        <a href="#" class="btn btn-sm btn-light rounded-circle"><i class="bi bi-twitter-x text-primary"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="card shadow-lg border-0 rounded-4 p-4 h-100 bg-white">
+                <h3 class="text-primary fw-bold mb-4">Bize Mesaj Gönderin</h3>
+                <form action="#" method="POST">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Adınız Soyadınız</label>
+                            <input type="text" class="form-control rounded-pill" placeholder="Örn: Ahmet Yılmaz" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">E-posta Adresiniz</label>
+                            <input type="email" class="form-control rounded-pill" placeholder="email@ornek.com" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Konu</label>
+                            <input type="text" class="form-control rounded-pill" placeholder="Kargo sorgulama, şikayet vb.">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Mesajınız</label>
+                            <textarea class="form-control rounded-4" rows="4" placeholder="Size nasıl yardımcı olabiliriz?" required></textarea>
+                        </div>
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn btn-primary w-100 rounded-pill fw-bold p-2 shadow">
+                                <i class="bi bi-send-fill me-2"></i> MESAJI GÖNDER
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

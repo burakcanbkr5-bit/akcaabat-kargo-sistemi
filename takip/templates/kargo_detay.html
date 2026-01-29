@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden" data-aos="zoom-in-up">
+    <div class="card-body p-0">
+        <div class="d-flex align-items-stretch">
+            <div class="bg-primary d-flex align-items-center justify-content-center px-4">
+                <i class="bi bi-cpu-fill text-white display-5"></i>
+            </div>
+            <div class="p-3 bg-white w-100">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="fw-bold mb-0 text-primary">
+                        <span class="spinner-grow spinner-grow-sm me-1"></span> Akçaabat AI - Akıllı Tahmin
+                    </h6>
+                    <span class="badge bg-primary-subtle text-primary border border-primary small">Beta 3.0</span>
+                </div>
+                {% if kargo.durum == 'Teslim Edildi' %}
+                    <p class="small mb-0 text-muted">AI Analizi: <strong>Başarılı Teslimat!</strong> Rota optimizasyonu %100 başarıyla tamamlandı.</p>
+                {% else %}
+                    <p class="small mb-2 text-muted">AI, trafik ve hava durumuna göre tahmini varış süresini hesaplıyor...</p>
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1 me-3">
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <span class="small fw-bold text-success"><strong>{{ kargo.ai_tahmin_suresi }}</strong></span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center" data-aos="fade-up">
+    <div class="col-md-9 col-lg-8">
+        <div class="card shadow-lg border-0 rounded-4 overflow-hidden mb-4">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3 px-4">
+                <h4 class="mb-0 fw-bold"><i class="bi bi-box-seam me-2"></i>Kargo Detayları</h4>
+                <span class="badge bg-warning text-dark fw-bold px-3 py-2 fs-6"># {{ kargo.takip_no }}</span>
+            </div>
+            
+            <div class="card-body p-4 p-lg-5">
+                <div class="mb-5">
+                    <h6 class="text-muted small text-uppercase fw-bold mb-3">Mevcut İlerleme</h6>
+                    <div class="progress" style="height: 25px; border-radius: 20px;">
+                        {% if kargo.durum == 'Hazırlanıyor' %}<div class="progress-bar bg-secondary" style="width: 25%">%25</div>
+                        {% elif kargo.durum == 'Yolda' %}<div class="progress-bar bg-warning text-dark" style="width: 60%">%60</div>
+                        {% elif kargo.durum == 'Şubede' %}<div class="progress-bar bg-info" style="width: 85%">%85</div>
+                        {% elif kargo.durum == 'Teslim Edildi' %}<div class="progress-bar bg-success" style="width: 100%">%100</div>{% endif %}
+                    </div>
+                </div>
+
+                <div class="row mb-4 bg-light p-4 rounded-4 mx-1">
+                    <div class="col-sm-6 mb-3">
+                        <h6 class="text-muted small text-uppercase fw-bold mb-1">Alıcı</h6>
+                        <p class="fs-4 fw-bold mb-0 text-dark">
+                            {% if user.is_authenticated %}{{ kargo.alici_ad }}{% else %}{{ kargo.alici_ad|slice:":1" }}*** ***{{ kargo.alici_ad|slice:"-1:" }}{% endif %}
+                        </p>
+                    </div>
+                    <div class="col-sm-6 text-sm-end">
+                        <h6 class="text-muted small text-uppercase fw-bold mb-1 text-primary">Kargo İçeriği</h6>
+                        <p class="text-dark mb-0">"{{ kargo.kargo_icerigi }}"</p>
+                    </div>
+                </div>
+
+                <h5 class="fw-bold mb-4 text-dark border-bottom pb-2">Sevkiyat Geçmişi</h5>
+                <div class="timeline mb-5">
+                    <div class="timeline-item d-flex mb-4">
+                        <div class="timeline-marker bg-success text-white rounded-circle shadow"><i class="bi bi-check"></i></div>
+                        <div class="ms-3">
+                            <h6 class="fw-bold mb-0">Kargo Kabul Edildi</h6>
+                            <small class="text-muted">Akçaabat Lojistik Merkezi</small>
+                        </div>
+                    </div>
+                    <div class="timeline-item d-flex mb-4">
+                        <div class="timeline-marker {% if kargo.durum == 'Yolda' or kargo.durum == 'Teslim Edildi' %}bg-primary{% else %}bg-light border{% endif %} text-white rounded-circle shadow"><i class="bi bi-truck"></i></div>
+                        <div class="ms-3">
+                            <h6 class="fw-bold mb-0 {% if kargo.durum == 'Yolda' or kargo.durum == 'Teslim Edildi' %}text-primary{% else %}text-muted{% endif %}">Dağıtımda</h6>
+                            <small class="text-muted">Kurye teslimat adresine yönlendirildi.</small>
+                        </div>
+                    </div>
+                    <div class="timeline-item d-flex">
+                        <div class="timeline-marker {% if kargo.durum == 'Teslim Edildi' %}bg-success{% else %}bg-light border{% endif %} text-white rounded-circle shadow"><i class="bi bi-house-check"></i></div>
+                        <div class="ms-3">
+                            <h6 class="fw-bold mb-0 {% if kargo.durum == 'Teslim Edildi' %}text-success{% else %}text-muted{% endif %}">Teslim Edildi</h6>
+                            <small class="text-muted">İşlem tamamlandı.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4 text-center">
+                    <h6 class="text-muted small text-uppercase fw-bold mb-3"><i class="bi bi-geo-alt-fill text-danger"></i> Canlı Konum Takibi</h6>
+                    <div class="rounded-4 overflow-hidden border shadow-sm position-relative" style="height: 250px;">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3012.7234327092!2d39.5815!3d41.0205!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDAxJzEzLjgiTiAzOcKwMzQnNTMuNCJF!5e0!3m2!1str!2str!4v1634567890123" 
+                                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                        <div class="position-absolute top-0 start-0 m-2 p-2 bg-dark text-white rounded-3 small shadow-sm opacity-75">
+                            <i class="bi bi-truck me-1"></i> Kurye: <strong>{{ kargo.kurye.isim|default:"Henüz Atanmadı" }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer bg-light text-center py-4 border-0">
+                <div class="d-flex flex-wrap justify-content-center gap-2">
+                    <a href="{% url 'ana_sayfa' %}" class="btn btn-outline-dark rounded-pill px-4 fw-bold shadow-sm">GERİ</a>
+                    <button class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm" onclick="etiketOlustur()"><i class="bi bi-printer-fill me-1"></i> ETİKET</button>
+                    <button class="btn btn-info rounded-pill px-4 fw-bold shadow-sm text-white" onclick="desiHesapla()"><i class="bi bi-calculator-fill me-1"></i> DESİ</button>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'kargo_guncelle' kargo.pk %}" class="btn btn-warning rounded-pill px-4 fw-bold shadow-sm">DÜZENLE</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="etiketModal" class="d-none position-fixed top-50 start-50 translate-middle bg-white p-4 shadow-lg rounded-4 border border-dark" style="z-index: 9999; width: 350px;">
+    <div class="text-center border-bottom pb-2 mb-3"><h6 class="fw-bold mb-0">AKÇAABAT KARGO ETİKETİ</h6></div>
+    <div class="row align-items-center mb-3">
+        <div class="col-6 text-center"><img src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12048.974914101188!2d39.578635849999994!3d41.02099955!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4067d71003460f9b%3A0xc3f6312450410757!2zQWvDp2FhYmF0LCBUcmFiem9u!5e0!3m2!1str!2str!4v1700000000000"
+        <div class="col-6 text-end">
+            <h6 class="small fw-bold mb-0 text-primary">AKÇAABAT / TRABZON</h6>
+            <hr class="my-1">
+            <span class="small fw-bold text-danger">{{ kargo.takip_no }}</span>
+        </div>
+    </div>
+    <div class="mt-3"><button class="btn btn-dark btn-sm w-100 rounded-pill mb-2" onclick="window.print()">YAZDIR</button>
+    <button class="btn btn-outline-danger btn-sm w-100 rounded-pill" onclick="document.getElementById('etiketModal').classList.add('d-none')">KAPAT</button></div>
+</div>
+
+<div id="desiModal" class="d-none position-fixed top-50 start-50 translate-middle bg-white p-4 shadow-lg rounded-4 border-start border-info border-5" style="z-index: 10000; width: 300px;">
+    <h6 class="fw-bold text-info mb-3"><i class="bi bi-calculator me-2"></i>AI Desi Hesapla</h6>
+    <div class="row g-2 mb-3">
+        <div class="col-4"><input type="number" id="eni" class="form-control form-control-sm" placeholder="En"></div>
+        <div class="col-4"><input type="number" id="boyu" class="form-control form-control-sm" placeholder="Boy"></div>
+        <div class="col-4"><input type="number" id="yuksek" class="form-control form-control-sm" placeholder="Yük."></div>
+    </div>
+    <div id="desiSonuc" class="alert alert-info py-2 small d-none shadow-sm"></div>
+    <button class="btn btn-info btn-sm w-100 rounded-pill text-white fw-bold mb-2 shadow-sm" onclick="analizEt()">HESAPLA</button>
+    <button class="btn btn-light btn-sm w-100 rounded-pill" onclick="document.getElementById('desiModal').classList.add('d-none')">KAPAT</button>
+</div>
+
+<style>
+    .timeline { position: relative; padding-left: 1.5rem; }
+    .timeline::before { content: ""; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: #dee2e6; }
+    .timeline-marker { width: 24px; height: 24px; position: absolute; left: -1px; display: flex; align-items: center; justify-content: center; font-size: 14px; z-index: 2; }
+    .timeline-item { position: relative; }
+</style>
+
+<script>
+function etiketOlustur() { document.getElementById('etiketModal').classList.remove('d-none'); }
+function desiHesapla() { document.getElementById('desiModal').classList.remove('d-none'); }
+function analizEt() {
+    const en = document.getElementById('eni').value;
+    const boy = document.getElementById('boyu').value;
+    const yuksek = document.getElementById('yuksek').value;
+    const sonucDiv = document.getElementById('desiSonuc');
+    if (en && boy && yuksek) {
+        const desi = (en * boy * yuksek) / 3000;
+        sonucDiv.classList.remove('d-none');
+        sonucDiv.innerHTML = `Desi: ${desi.toFixed(2)} | Maliyet: ₺${(desi * 15 + 50).toFixed(2)}`;
+    }
+}
+</script>
+{% endblock %}

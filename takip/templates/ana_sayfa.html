@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="p-5 mb-5 text-white rounded-5 shadow-lg text-center" 
+         style="background: radial-gradient(circle, #003d99 0%, #001f4d 100%);"
+         data-aos="zoom-in">
+        <h1 class="display-4 fw-bold mb-3">Akçaabat Kargo</h1>
+        <p class="lead mb-4 opacity-75">Hızın ve Güvenin Karadeniz'deki Adresi!</p>
+        <div class="row justify-content-center">
+            <div class="col-md-9 col-lg-7">
+                <form method="GET" action="{% url 'ana_sayfa' %}" class="input-group input-group-lg bg-white rounded-pill p-1 shadow">
+                    <input type="text" id="takipInput" name="sorgu" class="form-control border-0 rounded-pill ps-4" 
+                           placeholder="Takip numaranızı yazın..." value="{{ sorgu|default:'' }}">
+                    
+                    <button type="button" class="btn btn-light rounded-circle me-1 border-0" onclick="sesleSorgula()" title="Sesle Sorgula">
+                        <i class="bi bi-mic-fill text-primary"></i>
+                    </button>
+                    
+                    <button class="btn btn-warning rounded-pill px-5 fw-bold text-dark" type="submit">SORGULA</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5 text-center">
+        <div class="col-md-4 mb-3" data-aos="fade-up">
+            <div class="card bg-white shadow-sm rounded-4 p-4 border-bottom border-primary border-5 h-100">
+                <i class="bi bi-lightning-charge-fill display-4 text-primary mb-3"></i>
+                <h5 class="fw-bold">Hızlı Teslimat</h5>
+                <p class="small text-muted">Akçaabat içi gönderileriniz 60 dakika içinde kapınızda.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3" data-aos="fade-up" data-aos-delay="100">
+            <div class="card bg-white shadow-sm rounded-4 p-4 border-bottom border-warning border-5 h-100">
+                <i class="bi bi-shield-check display-4 text-warning mb-3"></i>
+                <h5 class="fw-bold">Güvenli Taşıma</h5>
+                <p class="small text-muted">Tüm paketleriniz sigortalı ve profesyonel ekibimizle güvende.</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3" data-aos="fade-up" data-aos-delay="200">
+            <div class="card bg-white shadow-sm rounded-4 p-4 border-bottom border-success border-5 h-100">
+                <i class="bi bi-map-fill display-4 text-success mb-3"></i>
+                <h5 class="fw-bold">Geniş Ağ</h5>
+                <p class="small text-muted">Trabzon'un her noktasına yayılmış 250+ dağıtım aracı.</p>
+            </div>
+        </div>
+    </div>
+
+    {% if user.is_authenticated %}
+        <div class="row mb-5" data-aos="fade-up">
+            <div class="col-12">
+                <div class="card border-0 shadow rounded-4 p-4">
+                    <h5 class="fw-bold mb-4 text-primary"><i class="bi bi-bar-chart-fill me-2"></i> Operasyonel Veri Analizi</h5>
+                    <div style="height: 250px;"><canvas id="operasyonGrafik"></canvas></div>
+                    <div class="row mt-3 text-center">
+                        <div class="col-4 border-end"><h6>Toplam: {{ toplam|default:0 }}</h6></div>
+                        <div class="col-4 border-end"><h6>Yolda: {{ yolda|default:0 }}</h6></div>
+                        <div class="col-4"><h6>Teslim: {{ teslim|default:0 }}</h6></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-lg border-0 rounded-4 overflow-hidden mb-5">
+            <div class="card-header bg-dark text-white py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold">Sevkiyat Kontrol Listesi</h5>
+                <a href="{% url 'kargo_ekle' %}" class="btn btn-success btn-sm rounded-pill">+ Yeni Kayıt</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover text-center mb-0">
+                    <thead class="table-light">
+                        <tr><th>Takip No</th><th>Alıcı</th><th>Durum</th><th>İşlem</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for kargo in kargolar %}
+                        <tr>
+                            <td class="fw-bold text-primary">#{{ kargo.takip_no }}</td>
+                            <td>{{ kargo.alici_ad }}</td>
+                            <td><span class="badge {% if kargo.durum == 'Teslim Edildi' %}bg-success{% else %}bg-warning text-dark{% endif %}">{{ kargo.durum }}</span></td>
+                            <td>
+                                <div class="btn-group shadow-sm rounded">
+                                    <a href="{% url 'kargo_detay' kargo.pk %}" class="btn btn-sm btn-dark">İncele</a>
+                                    <a href="{% url 'kargo_guncelle' kargo.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                                    <a href="{% url 'kargo_sil' kargo.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        {% if kargolar %}
+            {% with k=kargolar.0 %}
+            <div class="card shadow-lg border-0 rounded-5 p-5 text-center border-start border-warning border-5" data-aos="zoom-in">
+                <h2 class="fw-bold text-primary">📦 Kargonuz Bulundu!</h2>
+                <p class="fs-4">#{{ k.takip_no }} numaralı kargo şu an <strong>{{ k.durum }}</strong> aşamasındadır.</p>
+                <div class="mt-4">
+                    <a href="{% url 'kargo_detay' k.pk %}" class="btn btn-primary btn-lg rounded-pill shadow-lg px-5">DETAYLI TAKİP ET</a>
+                </div>
+            </div>
+            {% endwith %}
+        {% elif sorgu %}
+            <div class="alert alert-danger rounded-4 text-center p-4 shadow-sm border-0" data-aos="shake">
+                <i class="bi bi-exclamation-triangle fs-1 d-block mb-2 text-danger"></i>
+                Üzgünüz, <strong>"{{ sorgu }}"</strong> numaralı bir kargo bulunamadı.
+            </div>
+        {% endif %}
+    {% endif %}
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function sesleSorgula() {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'tr-TR';
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById('takipInput').value = transcript.replace(/\s/g, '').toUpperCase();
+                document.querySelector('form').submit();
+            };
+            recognition.start();
+        }
+
+        {% if user.is_authenticated %}
+        const ctx = document.getElementById('operasyonGrafik');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'],
+                datasets: [{
+                    label: 'Günlük Kargo Hacmi',
+                
+                   data: [5, 10, 8, Number("{{ toplam|default:0 }}"), Number("{{ yolda|default:0 }}"), Number("{{ teslim|default:0 }}"), Number("{{ toplam|default:0 }}")],
+                    borderColor: '#003d99',
+                    backgroundColor: 'rgba(0, 61, 153, 0.1)',
+                    fill: true, 
+                    tension: 0.4,
+                    borderWidth: 3
+                }]
+            },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+        {% endif %}
+    </script>
+{% endblock %}

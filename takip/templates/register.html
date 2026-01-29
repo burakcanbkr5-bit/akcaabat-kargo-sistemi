@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;" data-aos="zoom-in">
+    <div class="col-md-5 col-lg-4">
+        <div class="card border-0 shadow-lg rounded-5 overflow-hidden">
+            <div class="p-5">
+                <div class="text-center mb-4">
+                    <div class="bg-success text-white d-inline-block p-3 rounded-circle mb-3 shadow">
+                        <i class="bi bi-person-plus-fill fs-1"></i>
+                    </div>
+                    <h3 class="fw-bold">Yeni Kayıt</h3>
+                    <p class="text-muted small">Akçaabat Kargo ailesine hoş geldiniz.</p>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <div class="form-text small" style="font-size: 0.7rem;">{{ field.help_text }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-success w-100 rounded-pill py-2 fw-bold shadow mt-3">
+                        HESAP OLUŞTUR
+                    </button>
+                </form>
+
+                <div class="text-center mt-4">
+                    <p class="small text-muted">Zaten hesabınız var mı? <a href="{% url 'login' %}" class="text-primary fw-bold">Giriş Yap</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    input { display: block; width: 100%; padding: .375rem .75rem; border-radius: 20px; border: 1px solid #dee2e6; }
+</style>
+{% endblock %}
